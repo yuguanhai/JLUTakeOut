@@ -26,6 +26,7 @@ public class JWTRequest {
                 .compact();
     }
 
+
     // 验证JWT
     public static boolean validateToken(String token, String secretKey) {
         try {
