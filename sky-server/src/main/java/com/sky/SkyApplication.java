@@ -8,6 +8,7 @@ import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 aaa
+    aaa
 @SpringBootApplication
 @EnableTransactionManagement //开启注解方式的事务管理
 @EnableCaching //开启缓存功能
