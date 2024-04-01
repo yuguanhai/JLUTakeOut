@@ -19,5 +19,4 @@ public class SkyApplication {
         log.info("server started");
     }
 }
-aaaaa
-System.out
+aaa
