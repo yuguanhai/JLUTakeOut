@@ -48,6 +48,8 @@ public class OrderServiceImpl implements OrderService {
     private UserMapper userMapper;
     @Autowired
     private WebSocketServer webSocketServer;
+    @Autowired
+    private RecommendMapper recommendMapper;
 
     /**
      * 用户下单
@@ -156,9 +158,9 @@ public class OrderServiceImpl implements OrderService {
         orderMapper.update(orders);
         //通过websocket向客户端浏览器推送消息
         Map map = new HashMap();
-        map.put("type",1);//1是来单提醒，2是催单
-        map.put("orderId",ordersDB.getId());
-        map.put("content","订单号"+outTradeNo);
+        map.put("type", 1);//1是来单提醒，2是催单
+        map.put("orderId", ordersDB.getId());
+        map.put("content", "订单号" + outTradeNo);
         String jsonString = JSON.toJSONString(map);
         webSocketServer.sendToAllClient(jsonString);
 
@@ -473,16 +475,43 @@ public class OrderServiceImpl implements OrderService {
         orders.setDeliveryTime(LocalDateTime.now());
 
         orderMapper.update(orders);
+        updateRelate(ordersDB);
+    }
+
+    public void updateRelate(Orders orders) {
+        List<OrderDetail> orderDetailList = orderDetailMapper.getByOrderId(orders.getId());
+        for (OrderDetail orderDetail : orderDetailList) {
+            Relate selectRelate = recommendMapper.getRelate(orders.getUserId(), orderDetail.getDishId());
+            Relate newRelate = new Relate();
+            newRelate.setUserId(orders.getUserId());
+            newRelate.setDishId(orderDetail.getDishId());
+            if (selectRelate == null) {
+                // 如果从来没有打分，那么插入打分为2
+                newRelate.setGrade(2L);
+                recommendMapper.insertRelate(newRelate);
+            } else {
+                // 如果有打分，那么更新打分
+                Long grade = selectRelate.getGrade();
+                if (grade >= 5)
+                    grade = 5L;
+                else {
+                    if (orderDetail.getNumber() > 1) grade += 2;
+                    else grade++;
+                }
+                newRelate.setGrade(grade);
+                recommendMapper.updateRelate(newRelate);
+            }
+        }
     }
 
     @Override
     public void reminder(Long id) {
         Orders orders = orderMapper.getById(id);
-        if(orders==null)throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
+        if (orders == null) throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
         //通过websocket向客户端浏览器推送消息
         Map map = new HashMap();
-        map.put("type",2);//1是来单提醒，2是催单
-        map.put("content","订单号"+orders.getNumber());
+        map.put("type", 2);//1是来单提醒，2是催单
+        map.put("content", "订单号" + orders.getNumber());
         String jsonString = JSON.toJSONString(map);
         webSocketServer.sendToAllClient(jsonString);
     }

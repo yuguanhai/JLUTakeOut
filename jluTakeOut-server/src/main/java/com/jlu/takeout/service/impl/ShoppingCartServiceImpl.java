@@ -1,6 +1,8 @@
 package com.jlu.takeout.service.impl;
 
 import com.jlu.takeout.context.BaseContext;
+import com.jlu.takeout.entity.Relate;
+import com.jlu.takeout.mapper.RecommendMapper;
 import com.jlu.takeout.service.ShoppingCartService;
 import com.jlu.takeout.dto.ShoppingCartDTO;
 import com.jlu.takeout.entity.Dish;
@@ -26,6 +28,8 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     private DishMapper dishMapper;
     @Autowired
     private SetmealMapper setmealMapper;
+    @Autowired
+    private RecommendMapper recommendMapper;
 
     /**
      * 添加购物车
@@ -55,6 +59,16 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
                 shoppingCart.setName(dish.getName());
                 shoppingCart.setImage(dish.getImage());
                 shoppingCart.setAmount(dish.getPrice());
+
+                //如果推荐表里没有，需要添加到推荐表，grade为1
+                if (recommendMapper.getRelate(dishId, userId) == null){
+                    Relate relate = new Relate();
+                    relate.setDishId(dishId);
+                    relate.setUserId(userId);
+                    relate.setGrade(1L);
+                    recommendMapper.insertRelate(relate);
+                }
+
             } else {
                 //本次添加的是套餐
                 Long setmealId = shoppingCartDTO.getSetmealId();
@@ -96,7 +110,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         shoppingCart = list.get(0);
         //是不是number就一个
         if (shoppingCart.getNumber() == 1) {
-            shoppingCartMapper.deleteById(shoppingCart.getId() );
+            shoppingCartMapper.deleteById(shoppingCart.getId());
         } else {
             shoppingCart.setNumber(shoppingCart.getNumber() - 1);
             shoppingCartMapper.updateNumberById(shoppingCart);

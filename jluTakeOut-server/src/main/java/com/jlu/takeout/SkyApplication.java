@@ -13,8 +13,10 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @Slf4j
 @EnableScheduling //开启任务调度
 public class SkyApplication {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         SpringApplication.run(SkyApplication.class, args);
+        RedisStartHelper redisStartHelper = new RedisStartHelper();
+        redisStartHelper.ensureRedisRunning();
         log.info("server started");
     }
 }

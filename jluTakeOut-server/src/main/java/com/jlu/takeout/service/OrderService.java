@@ -1,6 +1,7 @@
 package com.jlu.takeout.service;
 
 import com.jlu.takeout.dto.*;
+import com.jlu.takeout.entity.Orders;
 import com.jlu.takeout.result.PageResult;
 import com.jlu.takeout.vo.OrderPaymentVO;
 import com.jlu.takeout.vo.OrderStatisticsVO;
@@ -87,4 +88,6 @@ public interface OrderService {
     void complete(Long id);
 
     void reminder(Long id);
+
+    void updateRelate(Orders orders);
 }
