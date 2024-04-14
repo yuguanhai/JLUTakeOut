@@ -42,6 +42,9 @@
             <if test="categoryId != null">
                 and category_id = #{categoryId}
             </if>
+            <if test="id != null">
+                and id = #{id}
+            </if>
             <if test="status != null">
                 and status = #{status}
             </if>
@@ -87,5 +90,11 @@
             <if test="status != null"> and status = #{status} </if>
             <if test="categoryId != null"> and category_id = #{categoryId} </if>
         </where>
+    </select>
+    <select id="selectDishesByIds" resultType="com.jlu.takeout.entity.Dish">
+        select * from dish where id in
+        <foreach collection="ids" item="dishId" separator="," open="(" close=")">
+            #{dishId}
+        </foreach>
     </select>
 </mapper>

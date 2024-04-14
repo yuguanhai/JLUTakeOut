@@ -1,4 +1,6 @@
 package com.jlu.takeout;
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
@@ -7,15 +9,16 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 
+@Slf4j
 class RedisStartHelper {
 
     private static final String REDIS_SERVER_EXE_PATH = "D:\\cs_tools\\Redis-x64-3.2.100\\redis-server.exe";
     private static final String CONFIG_FILE_PATH = "D:\\cs_tools\\Redis-x64-3.2.100\\redis.windows.conf"; // 指定配置文件路径
 
     public void ensureRedisRunning() throws Exception {
-        System.out.println("正在检测redis服务是否启动...");
+        log.info("正在检测redis服务是否启动...");
         if (!isRedisRunning()) {
-            System.out.println("检测到redis未启动，将执行启动redis");
+            log.info("redis服务未启动，正在启动...");
             startRedis();
         }
     }

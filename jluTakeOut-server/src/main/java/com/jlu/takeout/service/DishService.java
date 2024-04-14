@@ -56,4 +56,6 @@ public interface DishService {
      * @return
      */
     List<DishVO> listWithFlavor(Dish dish);
+    List<DishVO> getDishFlavors(List<Dish> dishList);
+    List<DishVO> listWithFlavorByDishIds(List<Long> dishIds);
 }

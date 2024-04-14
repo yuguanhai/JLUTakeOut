@@ -13,8 +13,14 @@ public interface RecommendMapper {
     @Select("select * from relate")
     List<Relate> getAllRelate();
 
+    @Select("select * from relate where user_id = #{userId}")
+    List<Relate> getRelateByUserId(Long userId);
+
     @Select("select * from relate where user_id = #{userId} and dish_id = #{dishId}")
     Relate getRelate(Long userId, Long dishId);
+
+    @Select("select dish_id from relate group by dish_id order by sum(grade) desc limit 5")
+    List<Long> findTopDishesInRelate();
 
     @Insert("insert into relate(user_id, dish_id, grade) values (#{userId}, #{dishId}, #{grade})")
     void insertRelate(Relate relate);
@@ -26,18 +32,21 @@ public interface RecommendMapper {
     void deleteByDishId(Long dishId);
 
     @Select("select * from dish_similarity where left_dish_id = #{leftDishId} and right_dish_id = #{rightDishId}")
-    void getSimilarity(Long userId);
+    DishSimilarity getSimilarity(Long userId);
 
     @Select("select * from dish_similarity")
     List<DishSimilarity> getAllSimilarity();
 
     @Insert("insert into dish_similarity(left_dish_id, right_dish_id, similarity) values (#{leftDishId}, #{rightDishId}, #{similarity})")
-    DishSimilarity insertSimilarity(DishSimilarity dishSimilarity);
+    void insertSimilarity(DishSimilarity dishSimilarity);
 
     @Update("update dish_similarity set similarity = #{similarity} where left_dish_id = #{leftDishId} and right_dish_id = #{rightDishId}")
     void updateSimilarity(DishSimilarity dishSimilarity);
 
     @Delete("delete from dish_similarity where left_dish_id = #{leftDishId} and right_dish_id = #{rightDishId}")
     void deleteSimilarity(DishSimilarity dishSimilarity);
+
+    @Delete("delete from dish_similarity")
+    void deleteAllSimilarity();
 
 }

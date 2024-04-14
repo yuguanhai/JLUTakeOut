@@ -122,7 +122,6 @@ public class OrderServiceImpl implements OrderService {
         //JSONObject jsonObject = weChatPayUtil.pay(
         //ordersPaymentDTO.getOrderNumber(), //商户订单号
         //new BigDecimal(0.01), //支付金额，单位
-        //"苍穹外卖订单", //商品描述
         //user.getOpenid() //微信用户的openid
         //);
         //

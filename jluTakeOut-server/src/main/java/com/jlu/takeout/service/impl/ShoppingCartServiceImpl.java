@@ -61,7 +61,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
                 shoppingCart.setAmount(dish.getPrice());
 
                 //如果推荐表里没有，需要添加到推荐表，grade为1
-                if (recommendMapper.getRelate(dishId, userId) == null){
+                if (recommendMapper.getRelate(userId, dishId) == null){
                     Relate relate = new Relate();
                     relate.setDishId(dishId);
                     relate.setUserId(userId);

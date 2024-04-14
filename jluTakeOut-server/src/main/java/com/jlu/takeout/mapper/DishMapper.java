@@ -81,4 +81,11 @@ public interface DishMapper {
      * @return
      */
     Integer countByMap(Map map);
+
+    /**
+     * 根据dishids批量查询dish信息
+     * @param ids
+     * @return
+     */
+    List<Dish> selectDishesByIds(@Param("ids") List<Long> ids);
 }

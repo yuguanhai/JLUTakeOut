@@ -10,11 +10,9 @@ import com.jlu.takeout.entity.Dish;
 import com.jlu.takeout.entity.DishFlavor;
 import com.jlu.takeout.entity.Setmeal;
 import com.jlu.takeout.exception.DeletionNotAllowedException;
-import com.jlu.takeout.mapper.DishMapper;
-import com.jlu.takeout.mapper.SetmealDishMapper;
-import com.jlu.takeout.mapper.SetmealMapper;
+import com.jlu.takeout.mapper.*;
+import com.jlu.takeout.service.RecommendService;
 import com.jlu.takeout.vo.DishVO;
-import com.jlu.takeout.mapper.DishFlavorMapper;
 import com.jlu.takeout.result.PageResult;
 import com.jlu.takeout.service.DishService;
 import lombok.extern.slf4j.Slf4j;
@@ -37,6 +35,8 @@ public class DishServiceImpl implements DishService {
     private SetmealDishMapper setmealDishMapper;
     @Autowired
     private SetmealMapper setmealMapper;
+    @Autowired
+    private RecommendMapper recommendMapper;
     /**
      * 新增菜品以及对应的口味
      *
@@ -105,6 +105,10 @@ public class DishServiceImpl implements DishService {
         //使用ids批量删除菜品和口味数据
         dishMapper.deleteByIds(ids);
         dishFlavorMapper.deleteByDishIds(ids);
+        recommendMapper.deleteAllSimilarity();
+        for (Long id : ids) {
+            recommendMapper.deleteByDishId(id);
+        }
     }
     /**
      * 根据id查找菜品和口味
@@ -202,6 +206,16 @@ public class DishServiceImpl implements DishService {
     public List<DishVO> listWithFlavor(Dish dish) {
         List<Dish> dishList = dishMapper.list(dish);
 
+        return getDishFlavors(dishList);
+    }
+
+    public List<DishVO> listWithFlavorByDishIds(List<Long> dishIds) {
+        List<Dish> dishList = dishMapper.selectDishesByIds(dishIds);
+
+        return getDishFlavors(dishList);
+    }
+
+    public List<DishVO> getDishFlavors(List<Dish> dishList) {
         List<DishVO> dishVOList = new ArrayList<>();
 
         for (Dish d : dishList) {
